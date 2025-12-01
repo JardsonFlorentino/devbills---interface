@@ -117,9 +117,9 @@ src/
 
 ## 🔗 Repositórios Relacionados
 
-Frontend: controleja-interface (este repositório)
+Frontend: [controleja-interface (este repositório)](https://github.com/JardsonFlorentino/controleja-interface)
 
-Backend: https://github.com/JardsonFlorentino/devbills---api
+Backend: [https://github.com/JardsonFlorentino/devbills---api](https://github.com/JardsonFlorentino/controleja-api)
 
 ## 🙋‍♂️ Autor
 
