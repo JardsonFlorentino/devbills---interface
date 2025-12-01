@@ -31,6 +31,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { PieLabelRenderProps } from "recharts";
 
 const initialSummary: TransactionSummary = {
   totalExpenses: 0,
@@ -40,11 +41,6 @@ const initialSummary: TransactionSummary = {
   monthResult: 0,
   expensesByCategory: [],
 };
-
-interface ChartLabelProps {
-  categoryName: string;
-  percent: number;
-}
 
 const Dashboard = () => {
   const currentDate = new Date();
@@ -71,16 +67,16 @@ const Dashboard = () => {
     loadTransactionsMonthly();
   }, [month, year]);
 
-  const renderPieChartLabel = ({
-    categoryName,
-    percent,
-  }: ChartLabelProps): string => {
-    return ` ${categoryName}: ${(percent * 100).toFixed(1)}%`;
+  const renderPieChartLabel = (props: PieLabelRenderProps): string => {
+    const { name, percent } = props;
+    return ` ${String(name)}: ${((percent ?? 0) * 100).toFixed(1)}%`;
   };
 
   const formatTooTipValue = (value: number | string): string => {
     return formatCurrency(typeof value === "number" ? value : 0);
   };
+
+  const pieData = summary.expensesByCategory as unknown as any[];
 
   return (
     <div className="container-app py-6">
@@ -162,7 +158,7 @@ const Dashboard = () => {
               <ResponsiveContainer>
                 <PieChart>
                   <Pie
-                    data={summary.expensesByCategory}
+                    data={pieData}
                     cx="50%"
                     cy="50%"
                     outerRadius={80}
@@ -221,7 +217,6 @@ const Dashboard = () => {
                     left: 20,
                     bottom: 5,
                   }}
-                  tick={{ style: { textTransform: "capitalize" } }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
