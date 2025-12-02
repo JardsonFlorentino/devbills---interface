@@ -44,27 +44,45 @@ const Header = () => {
 
   return (
     <header className="bg-gray-900 border-b border-gray-700">
-      <div className="container-app py-3">
-        {/* Linha superior: logo + (mobile: avatar/sair) + (desktop: saudação/avat/sair) */}
-        <div className="flex items-center justify-between gap-3">
+      <div className="container-app">
+        {/* DESKTOP: tudo em uma linha só */}
+        <div className="hidden md:flex items-center justify-between py-4">
           {/* LOGO */}
           <Link
             to="/"
-            className="flex gap-2 text-lg md:text-xl text-primary-500 items-center font-bold"
+            className="flex gap-2 text-xl text-primary-500 items-center font-bold"
           >
             <Activity className="h-6 w-6" />
             ControleJá
           </Link>
 
-          {/* Desktop à direita: saudação + avatar + sair */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* NAV Desktop (meio) */}
+          {isAutenticated && (
+            <nav className="flex space-x-3">
+              {navLink.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={
+                    pathname === link.path
+                      ? "text-primary-500 bg-primary-500/10 rounded-md h-10 px-3 py-2"
+                      : "text-gray-400 h-10 px-3 py-2 hover:text-primary-500 hover:bg-primary-500/5 rounded-md"
+                  }
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </nav>
+          )}
+
+          {/* USUÁRIO Desktop (direita) */}
+          <div className="flex items-center space-x-4">
             {isAutenticated ? (
               <div className="flex items-center space-x-4">
-                <div className="flex flex-col items-end text-sm leading-tight">
-                  <span className="text-gray-400 text-xs">Olá,</span>
-                  <span className="font-medium">{authState.user?.displayName}</span>
-                </div>
                 {renderAvatar()}
+                <span className="text-sm font-medium">
+                  {authState.user?.displayName}
+                </span>
                 <button
                   type="button"
                   onClick={handleSingOut}
@@ -79,67 +97,61 @@ const Header = () => {
               </Link>
             )}
           </div>
-
-          {/* Mobile à direita: avatar + sair compactos */}
-          {isAutenticated ? (
-            <div className="flex md:hidden items-center gap-2">
-              {renderAvatar()}
-              <button
-                type="button"
-                onClick={handleSingOut}
-                className="p-1.5 rounded-full hover:bg-red-500/10 text-red-400"
-                aria-label="Sair"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          ) : (
-            <Link to="/login" className="md:hidden">
-              <LogIn className="gb-primary-500 text-gray-900 font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-all" />
-            </Link>
-          )}
         </div>
 
-        {/* NAV desktop (como era antes): à esquerda em linha */}
-        {isAutenticated && (
-          <nav className="hidden md:flex mt-3 gap-3">
-            {navLink.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={
-                  pathname === link.path
-                    ? "text-primary-500 bg-primary-500/10 rounded-md h-10 px-3 py-2"
-                    : "text-gray-400 h-10 px-3 py-2 hover:text-primary-500 hover:bg-primary-500/5 rounded-md"
-                }
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-        )}
+        {/* MOBILE: duas linhas */}
+        <div className="md:hidden py-3 space-y-3">
+          {/* Linha 1: logo + avatar/sair */}
+          <div className="flex items-center justify-between gap-3">
+            <Link
+              to="/"
+              className="flex gap-2 text-lg text-primary-500 items-center font-bold"
+            >
+              <Activity className="h-6 w-6" />
+              ControleJá
+            </Link>
 
-        {/* NAV mobile (abas ocupando a largura inteira) */}
-        {isAutenticated && (
-          <nav className="md:hidden mt-3 flex w-full gap-2 text-sm">
-            {navLink.map((link) => {
-              const active = pathname === link.path;
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={
-                    active
-                      ? "flex-1 text-center text-primary-500 bg-primary-500/10 rounded-md px-3 py-2"
-                      : "flex-1 text-center text-gray-300 px-3 py-2 hover:text-primary-500 hover:bg-primary-500/5 rounded-md"
-                  }
+            {isAutenticated ? (
+              <div className="flex items-center gap-2">
+                {renderAvatar()}
+                <button
+                  type="button"
+                  onClick={handleSingOut}
+                  className="p-1.5 rounded-full hover:bg-red-500/10 text-red-400"
+                  aria-label="Sair"
                 >
-                  {link.name}
-                </Link>
-              );
-            })}
-          </nav>
-        )}
+                  <LogOut size={18} />
+                </button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <LogIn className="gb-primary-500 text-gray-900 font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-all" />
+              </Link>
+            )}
+          </div>
+
+          {/* Linha 2: abas largas */}
+          {isAutenticated && (
+            <nav className="flex w-full gap-2 text-sm">
+              {navLink.map((link) => {
+                const active = pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={
+                      active
+                        ? "flex-1 text-center text-primary-500 bg-primary-500/10 rounded-md px-3 py-2"
+                        : "flex-1 text-center text-gray-300 px-3 py-2 hover:text-primary-500 hover:bg-primary-500/5 rounded-md"
+                    }
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
+        </div>
       </div>
     </header>
   );
