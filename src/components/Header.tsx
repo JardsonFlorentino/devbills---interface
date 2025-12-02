@@ -45,15 +45,34 @@ const Header = () => {
   return (
     <header className="bg-gray-900 border-b border-gray-700">
       <div className="container-app">
+        {/* Linha principal do header */}
         <div className="flex items-center justify-between gap-3 py-4">
-          {/* LOGO */}
-          <Link
-            to="/"
-            className="flex gap-2 text-lg md:text-xl text-primary-500 items-center font-bold"
-          >
-            <Activity className="h-6 w-6" />
-            ControleJá
-          </Link>
+          {/* Logo + infos do usuário (mobile) */}
+          <div className="flex items-center gap-3">
+            {/* LOGO */}
+            <Link
+              to="/"
+              className="flex gap-2 text-lg md:text-xl text-primary-500 items-center font-bold"
+            >
+              <Activity className="h-6 w-6" />
+              ControleJá
+            </Link>
+
+            {/* Avatar + sair no mobile */}
+            {isAutenticated && (
+              <div className="flex items-center gap-2 md:hidden">
+                {renderAvatar()}
+                <button
+                  type="button"
+                  onClick={handleSingOut}
+                  className="p-1.5 rounded-full hover:bg-red-500/10 text-red-400"
+                  aria-label="Sair"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* NAV: visível em todas as telas */}
           {isAutenticated && (
@@ -74,11 +93,10 @@ const Header = () => {
             </nav>
           )}
 
-          {/* ÁREA DIREITA (desktop) */}
+          {/* Área direita só no desktop: avatar + nome + sair */}
           <div className="hidden md:flex items-center space-x-4">
             {isAutenticated ? (
               <div className="flex items-center space-x-4">
-                {/* AVATAR + NOME */}
                 <div className="flex items-center space-x-2">
                   {renderAvatar()}
                   <span className="text-sm font-medium">
