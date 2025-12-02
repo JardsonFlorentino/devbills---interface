@@ -44,8 +44,8 @@ const Header = () => {
 
   return (
     <header className="bg-gray-900 border-b border-gray-700">
-      <div className="container-app py-3 space-y-3">
-        {/* Linha 1: logo + usuário */}
+      <div className="container-app py-3">
+        {/* Linha superior: logo + (mobile: avatar/sair) + (desktop: saudação/avat/sair) */}
         <div className="flex items-center justify-between gap-3">
           {/* LOGO */}
           <Link
@@ -56,38 +56,72 @@ const Header = () => {
             ControleJá
           </Link>
 
-          {/* Usuário (mobile + desktop) */}
-          {isAutenticated ? (
-            <div className="flex items-center gap-3">
-              <div className="hidden md:flex flex-col items-end text-sm leading-tight">
-                <span className="text-gray-400 text-xs">Olá,</span>
-                <span className="font-medium">
-                  {authState.user?.displayName}
-                </span>
+          {/* Desktop à direita: saudação + avatar + sair */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isAutenticated ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex flex-col items-end text-sm leading-tight">
+                  <span className="text-gray-400 text-xs">Olá,</span>
+                  <span className="font-medium">{authState.user?.displayName}</span>
+                </div>
+                {renderAvatar()}
+                <button
+                  type="button"
+                  onClick={handleSingOut}
+                  className="hover:text-red-300 hover:bg-red-500 p-2 rounded-full transition-colors cursor-pointer"
+                >
+                  <LogOut className="text-gray-200" />
+                </button>
               </div>
+            ) : (
+              <Link to="/login">
+                <LogIn className="gb-primary-500 text-gray-900 font-semibold px-5 py-2.5 rounded-xl flex items-center justify-center hover:bg-primary-500 transition-all" />
+              </Link>
+            )}
+          </div>
 
+          {/* Mobile à direita: avatar + sair compactos */}
+          {isAutenticated ? (
+            <div className="flex md:hidden items-center gap-2">
               {renderAvatar()}
-
               <button
                 type="button"
                 onClick={handleSingOut}
-                className="p-1.5 md:p-2 rounded-full hover:bg-red-500/10 text-red-400"
+                className="p-1.5 rounded-full hover:bg-red-500/10 text-red-400"
                 aria-label="Sair"
               >
-                <LogOut size={18} className="md:hidden" />
-                <LogOut size={20} className="hidden md:block" />
+                <LogOut size={18} />
               </button>
             </div>
           ) : (
-            <Link to="/login">
-              <LogIn className="gb-primary-500 text-gray-900 font-semibold px-5 py-2.5 rounded-xl flex items-center justify-center hover:bg-primary-500 transition-all" />
+            <Link to="/login" className="md:hidden">
+              <LogIn className="gb-primary-500 text-gray-900 font-semibold px-4 py-2 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-all" />
             </Link>
           )}
         </div>
 
-        {/* Linha 2: navegação principal (ocupa largura toda) */}
+        {/* NAV desktop (como era antes): à esquerda em linha */}
         {isAutenticated && (
-          <nav className="flex w-full gap-2 md:gap-3 text-sm md:text-base">
+          <nav className="hidden md:flex mt-3 gap-3">
+            {navLink.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={
+                  pathname === link.path
+                    ? "text-primary-500 bg-primary-500/10 rounded-md h-10 px-3 py-2"
+                    : "text-gray-400 h-10 px-3 py-2 hover:text-primary-500 hover:bg-primary-500/5 rounded-md"
+                }
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        )}
+
+        {/* NAV mobile (abas ocupando a largura inteira) */}
+        {isAutenticated && (
+          <nav className="md:hidden mt-3 flex w-full gap-2 text-sm">
             {navLink.map((link) => {
               const active = pathname === link.path;
               return (
