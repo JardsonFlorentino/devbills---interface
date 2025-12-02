@@ -1,28 +1,36 @@
-import axios, { type AxiosInstance, type InternalAxiosRequestConfig} from "axios";
+import axios, {
+  type AxiosInstance,
+  type InternalAxiosRequestConfig,
+} from "axios";
 import { firebaseAuth } from "../config/firebase";
 
+const BASE_URL_WITH_PREFIX = `${import.meta.env.VITE_API_URL}/api`;
 
 export const api: AxiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    timeout: 10000,
+  baseURL: BASE_URL_WITH_PREFIX,
+  timeout: 10000,
 });
 
 api.interceptors.request.use(
-    async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
-        const user = firebaseAuth.currentUser
+  async (
+    config: InternalAxiosRequestConfig,
+  ): Promise<InternalAxiosRequestConfig> => {
+    const user = firebaseAuth.currentUser;
 
-        if (user) {
-            try {
-                const token = await user.getIdToken();
-                config.headers.set("Authorization", `Bearer ${token}`);
-            } catch (error) {
-                console.log(" Erro ao obter token:", error);
-            }
+    if (user) {
+      try {
+        const token = await user.getIdToken();
+        // Garante que headers existe e seta o Authorization
+        config.headers = config.headers ?? {};
+        config.headers.Authorization = `Bearer ${token}`;
+      } catch (error) {
+        console.error("Erro ao obter token:", error);
+      }
+    }
 
-        }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
-        return config;
-        
-  }
-
- )
+export default api;
